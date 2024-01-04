@@ -2,10 +2,7 @@ package hello.hellospring.repository;
 
 import hello.hellospring.domain.Member;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class MemoryMemberRepository implements MemberRepository{
 
@@ -14,23 +11,30 @@ public class MemoryMemberRepository implements MemberRepository{
 
     @Override
     public Member save(Member member) {
-        member.setId(++sequence);
-        store.put(member.getId(), member);
+        ++sequence;
+        member.setId(sequence); // 자동적으로 1씩 증가하는 유저ID
+        store.put(member.getId(), member); // store 객체에 Id와 member 객체 입력
         return member;
     }
 
     @Override
     public Optional<Member> findById(Long id) {
-        return Optional.empty();
+        return Optional.ofNullable(store.get(id));
     }
 
     @Override
     public Optional<Member> findByName(String name) {
-        return Optional.empty();
+        return store.values().stream()
+                .filter(member -> member.getName().equals(name))
+                .findAny(); //조건에 만족하는 첫 번째 member 반환
     }
 
     @Override
     public List<Member> findAll() {
-        return null;
+        return new ArrayList<>(store.values());
+    }
+
+    public void clearStore(){
+        store.clear();
     }
 }
