@@ -34,6 +34,12 @@ public class HelloController {
         return hello;
     }
 
+    @GetMapping("first-get")
+    @ResponseBody
+    public String son(@RequestParam(value = "name", defaultValue = "King") String name){
+        return "Sonwonik is " + name;
+    }
+
     static class Hello{
         private String name;
 
