@@ -9,14 +9,18 @@ import java.util.Optional;
 
 public class MemberService {
 
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
+    private final MemberRepository memberRepository;
+
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
+
     public Long join(Member member){
 
         checkOverlapMember(member);
 
         //존재 하지 않으면 넘어가고 존재하면 안에 메서드가 실행됨
         // result.orElseGet() -> 값이 있으면 꺼내고 없으면 default값을 넣어서 꺼냄
-
 
         memberRepository.save(member);
         return member.getId();
