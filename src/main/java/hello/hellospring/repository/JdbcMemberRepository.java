@@ -11,22 +11,27 @@ import java.util.Optional;
 
 public class JdbcMemberRepository implements MemberRepository {
     private final DataSource dataSource;
+
     public JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
     @Override
     public Member save(Member member) {
         String sql = "insert into member(name) values(?)";
+
         Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        PreparedStatement pstmt = null; // 쿼리문 입력
+        ResultSet rs = null; //결과 반환 객체로
         try {
             conn = getConnection();
-            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.setString(1, member.getName());
-            pstmt.executeUpdate();
-            rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
+            pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); //GENARATED_KEY
+            pstmt.setString(1, member.getName()); // sql 인덱스 name에 1대입
+
+            pstmt.executeUpdate(); // 실제 쿼리문 입력
+            rs = pstmt.getGeneratedKeys(); //setString 키 1번, 2번에 해당하는 값 반환
+
+            if (rs.next()) {//값이 있을때
                 member.setId(rs.getLong(1));
             } else {
                 throw new SQLException("id 조회 실패");
@@ -35,19 +40,24 @@ public class JdbcMemberRepository implements MemberRepository {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         } finally {
-            close(conn, pstmt, rs);
+            close(conn, pstmt, rs); // 데이터베이스 연결 자원 반환
         }
     }
     @Override
     public Optional<Member> findById(Long id) {
         String sql = "select * from member where id = ?";
-        Connection conn = null; PreparedStatement pstmt = null;
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
         ResultSet rs = null;
+
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
             pstmt.setLong(1, id);
+
             rs = pstmt.executeQuery();
+
             if(rs.next()) {
                 Member member = new Member();
                 member.setId(rs.getLong("id"));
@@ -65,9 +75,11 @@ public class JdbcMemberRepository implements MemberRepository {
     @Override
     public List<Member> findAll() {
         String sql = "select * from member";
+
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -91,6 +103,7 @@ public class JdbcMemberRepository implements MemberRepository {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -108,9 +121,11 @@ public class JdbcMemberRepository implements MemberRepository {
         } finally {
             close(conn, pstmt, rs);
         }
-    } private Connection getConnection() {
+    }
+    private Connection getConnection() {
         return DataSourceUtils.getConnection(dataSource);
     }
+
     private void close(Connection conn, PreparedStatement pstmt, ResultSet rs) {
         try {
             if (rs != null) {
