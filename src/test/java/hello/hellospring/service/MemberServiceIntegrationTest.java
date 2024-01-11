@@ -2,40 +2,31 @@ package hello.hellospring.service;
 
 import hello.hellospring.domain.Member;
 import hello.hellospring.repository.MemberRepository;
-import hello.hellospring.repository.MemoryMemberRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.internal.matchers.Null;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class MemberServiceTest {
-    MemberService memberService;
-    MemoryMemberRepository memberRepository;
+@SpringBootTest
+@Transactional
+class MemberServiceIntegrationTest {
 
-    @BeforeEach
-    public void beforeEach(){
-        memberRepository = new MemoryMemberRepository();
-        memberService = new MemberService(memberRepository);
-    }
-
-    @AfterEach
-    public void afterEach(){
-        memberRepository.clearStore();
-    }
+    @Autowired  MemberService memberService;
+    @Autowired
+    MemberRepository memberRepository;
 
     @Test
     void join() {
         //given
         Member member = new Member();
-        member.setName("박민서");
+        member.setName("안뇽");
 
 
         //when
@@ -48,13 +39,13 @@ class MemberServiceTest {
     }
 
     @Test
-    void OvelapTest(){
+    void OverlapTest(){
         //given
         Member member = new Member();
-        member.setName("박민서");
+        member.setName("박민서1");
 
         Member member2 = new Member();
-        member2.setName("박민서");
+        member2.setName("박민서1");
 
         memberService.join(member);
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> memberService.join(member2));
@@ -75,7 +66,4 @@ class MemberServiceTest {
         //then
     }
 
-    @Test
-    void findOne() {
-    }
 }

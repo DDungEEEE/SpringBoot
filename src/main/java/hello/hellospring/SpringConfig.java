@@ -29,4 +29,6 @@ public class SpringConfig {
     public MemberRepository memberRepository(){
         return new JdbcMemberRepository(dataSource);
     }
+
+
 }
