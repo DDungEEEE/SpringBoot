@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -23,10 +24,11 @@ class MemberServiceIntegrationTest {
     MemberRepository memberRepository;
 
     @Test
-    void join() {
+    @Commit
+    void 회원가입() {
         //given
         Member member = new Member();
-        member.setName("안뇽");
+        member.setName("하이루");
 
 
         //when
@@ -39,7 +41,7 @@ class MemberServiceIntegrationTest {
     }
 
     @Test
-    void OverlapTest(){
+    void 중복검사(){
         //given
         Member member = new Member();
         member.setName("박민서1");
@@ -57,7 +59,7 @@ class MemberServiceIntegrationTest {
     }
 
     @Test
-    void findMembers() {
+    void 회원검색() {
         //given
         List<Member> result  = memberService.findMembers();
         System.out.println(result);
